@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Runtime data
+memory/working/*.json
+memory/episodic/*.json
+memory/semantic/*.json
+memory/procedural/*.json
+queue/pending/*.json
+queue/in_progress/*.json
+queue/completed/*.json
+queue/dead_letter/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

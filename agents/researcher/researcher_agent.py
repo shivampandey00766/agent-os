@@ -110,7 +110,7 @@ class ResearcherAgent:
         extracted_content = await self._extract_content(search_results[:max_sources])
 
         # Step 4: Validate sources
-        validated = self._validate_sources(extracted_content)
+        validated = await self._validate_sources(extracted_content)
 
         # Step 5: Synthesize findings
         findings = self._synthesize_findings(validated)

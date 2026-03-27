@@ -62,29 +62,31 @@ class Orchestrator:
 
     def _register_agents(self):
         """Register available agents."""
+        import sys
+
         # Import agents lazily to avoid circular dependencies
         try:
             from agents.researcher.researcher_agent import ResearcherAgent
             self.agents["researcher"] = ResearcherAgent()
-        except ImportError as e:
+        except Exception as e:
             print(f"Warning: Could not load researcher agent: {e}")
 
         try:
             from agents.planner.planner_agent import PlannerAgent
             self.agents["planner"] = PlannerAgent()
-        except ImportError as e:
+        except Exception as e:
             print(f"Warning: Could not load planner agent: {e}")
 
         try:
             from agents.executor.executor_agent import ExecutorAgent
             self.agents["executor"] = ExecutorAgent()
-        except ImportError as e:
+        except Exception as e:
             print(f"Warning: Could not load executor agent: {e}")
 
         try:
             from agents.synthesizer.synthesizer_agent import SynthesizerAgent
             self.agents["synthesizer"] = SynthesizerAgent()
-        except ImportError as e:
+        except Exception as e:
             print(f"Warning: Could not load synthesizer agent: {e}")
 
     async def run(self, initial_task: dict = None) -> dict:
@@ -251,7 +253,15 @@ class Orchestrator:
     async def _act(self, task, plan: dict) -> dict:
         """Execute the planned actions."""
         agent_type = task.type
-        agent = self.agents.get(agent_type)
+        # Map task type to agent key
+        type_to_agent = {
+            "research": "researcher",
+            "plan": "planner",
+            "execute": "executor",
+            "synthesize": "synthesizer",
+        }
+        agent_key = type_to_agent.get(agent_type, agent_type)
+        agent = self.agents.get(agent_key)
 
         if not agent:
             # Fallback to generic execution if agent not loaded

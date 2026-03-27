@@ -465,19 +465,22 @@ class ResearcherAgent:
         if any(d in url_lower for d in [".edu", "arxiv.org", "scholar.google", "pubmed", "nature.com", "science.org"]):
             return "academic"
         # Official/government sources
-        elif any(d in url_lower for d in [".gov", "who.int", "eu.eu", "official"]):
+        elif any(d in url_lower for d in [".gov", "who.int", "eu.eu"]):
             return "official"
         # Major research/analysis firms
         elif any(d in url_lower for d in ["mckinsey.com", "bain.com", "bcg.com", "gartner.com", "forrester.com", "idc.com"]):
-            return "official"  # Treat as high-authority research
+            return "official"
+        # Company official blogs/announcements (high authority)
+        elif any(d in url_lower for d in ["github.com", "anthropic.com", "openai.com", "google.com", "microsoft.com", "amazon.com", "jetbrains.com", "stackoverflow.com"]):
+            return "official"
         # News outlets
-        elif any(d in url_lower for d in ["bloomberg.com", "reuters.com", "wsj.com", "ft.com", "news.", "techcrunch.com", "theverge.com"]):
+        elif any(d in url_lower for d in ["bloomberg.com", "reuters.com", "wsj.com", "ft.com", "news.", "techcrunch.com", "theverge.com", "wired.com"]):
             return "news"
         # Blogs
         elif any(d in url_lower for d in ["blog.", "medium.com", "substack.com", "hashnode.com", "dev.to"]):
             return "blog"
         # Forums
-        elif any(d in url_lower for d in ["reddit.com", "stackoverflow.com", "discord.com", "twitter.com", "x.com", "forum"]):
+        elif any(d in url_lower for d in ["reddit.com", "discord.com", "twitter.com", "x.com", "forum"]):
             return "forum"
         # Simulated/test data
         elif "example" in url_lower or "simulated" in url_lower:

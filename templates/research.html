@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent OS - Research</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Agent OS</h1>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/research" class="active">New Research</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="form-card">
+            <h2>Start New Research</h2>
+
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="/research">
+                <div class="form-group">
+                    <label for="query">Research Query</label>
+                    <textarea
+                        id="query"
+                        name="query"
+                        rows="4"
+                        placeholder="e.g., LLM trends 2026, AI coding assistants competitive landscape, etc."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="depth">Depth</label>
+                        <select id="depth" name="depth">
+                            <option value="standard">Standard</option>
+                            <option value="comprehensive" selected>Comprehensive</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priority (1-10)</label>
+                        <input
+                            type="range"
+                            id="priority"
+                            name="priority"
+                            min="1"
+                            max="10"
+                            value="10"
+                            oninput="priorityValue.value = priority.value"
+                        >
+                        <output id="priorityValue">10</output>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">
+                    Start Research
+                </button>
+            </form>
+        </div>
+
+        {% if recent_tasks %}
+        <div class="section">
+            <h3>Recent Completed Research</h3>
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Query</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in recent_tasks %}
+                    <tr>
+                        <td class="task-id">{{ task.id[:8] }}...</td>
+                        <td class="task-query">{{ task.input.get('query', 'N/A')[:50] }}...</td>
+                        <td><span class="status-badge status-{{ task.status }}">{{ task.status }}</span></td>
+                        <td><a href="/results/{{ task.id }}" class="btn-small">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if pending_tasks %}
+        <div class="section">
+            <h3>Pending Tasks</h3>
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Query</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in pending_tasks %}
+                    <tr>
+                        <td class="task-id">{{ task.id[:8] }}...</td>
+                        <td class="task-query">{{ task.input.get('query', 'N/A')[:50] }}...</td>
+                        <td>{{ task.priority }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>Agent OS v1.0 - Deep Research Autonomous Agent System</p>
+    </footer>
+</body>
+</html>

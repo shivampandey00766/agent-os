@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent OS - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Agent OS</h1>
+            <nav>
+                <a href="/" class="active">Dashboard</a>
+                <a href="/research">New Research</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="hero">
+            <h2>Deep Research Autonomous Agent System</h2>
+            <p>Multi-agent orchestration with 4-layer memory and self-improvement</p>
+            <a href="/research" class="btn btn-primary">Start New Research</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Queue Status</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Pending:</span>
+                    <span class="stat-value">{{ queue_stats.pending }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">In Progress:</span>
+                    <span class="stat-value">{{ queue_stats.in_progress }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Completed:</span>
+                    <span class="stat-value success">{{ queue_stats.completed }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Dead Letter:</span>
+                    <span class="stat-value danger">{{ queue_stats.dead_letter }}</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Memory System</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Working:</span>
+                    <span class="stat-value">{{ memory_stats.working_entries }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Episodic:</span>
+                    <span class="stat-value">{{ memory_stats.episodic_entries }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Semantic:</span>
+                    <span class="stat-value">{{ memory_stats.semantic_entries }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Procedural:</span>
+                    <span class="stat-value">{{ memory_stats.procedural_entries }}</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Quality Metrics</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Total Executions:</span>
+                    <span class="stat-value">{{ dashboard.total_executions }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Success Rate:</span>
+                    <span class="stat-value success">{{ "%.0f"|format(dashboard.overall_success_rate * 100) }}%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Active Skills:</span>
+                    <span class="stat-value">{{ dashboard.active_skills }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Patterns Learned:</span>
+                    <span class="stat-value">{{ dashboard.patterns_learned }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if recommendations %}
+        <div class="section">
+            <h3>Recommendations</h3>
+            <div class="recommendations">
+                {% for rec in recommendations[:3] %}
+                <div class="rec-card rec-{{ rec.priority }}">
+                    <span class="rec-badge">{{ rec.priority|upper }}</span>
+                    <p>{{ rec.recommendation }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <h3>Pending Tasks</h3>
+            {% if pending_tasks %}
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Priority</th>
+                        <th>Attempts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in pending_tasks %}
+                    <tr>
+                        <td class="task-id">{{ task.id[:8] }}...</td>
+                        <td>{{ task.type }}</td>
+                        <td>{{ task.priority }}</td>
+                        <td>{{ task.attempt_count }}/{{ task.max_attempts }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-state">No pending tasks</p>
+            {% endif %}
+        </div>
+
+        {% if episodes %}
+        <div class="section">
+            <h3>Recent Sessions</h3>
+            <div class="episodes">
+                {% for ep in episodes %}
+                <div class="episode-card">
+                    <span class="ep-badge ep-{{ ep.outcome }}">{{ ep.outcome }}</span>
+                    <p class="ep-desc">{{ ep.description[:80] }}...</p>
+                    <small>ID: {{ ep.id[:8] }}...</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>Agent OS v1.0 - Deep Research Autonomous Agent System</p>
+    </footer>
+</body>
+</html>

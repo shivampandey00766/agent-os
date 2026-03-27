@@ -285,6 +285,15 @@ class TaskQueue:
                 tasks.append(Task.from_dict(json.load(f)))
         return tasks
 
+    def get_completed_tasks(self, limit: int = 20) -> list:
+        """Get all completed tasks sorted by completion time (most recent first)."""
+        tasks = []
+        for task_file in self.completed_path.glob("*.json"):
+            with open(task_file, 'r') as f:
+                tasks.append(Task.from_dict(json.load(f)))
+        # Sort by completed_at descending, then by created_at
+        return sorted(tasks, key=lambda t: (t.completed_at or t.created_at or '', t.created_at or ''), reverse=True)[:limit]
+
     def requeue_dead_letter(self, task_id: str, max_attempts: int = 5) -> bool:
         """Requeue a dead letter task with a new max_attempts."""
         task = self._read_task(task_id)

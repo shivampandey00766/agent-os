@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent OS - Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Agent OS</h1>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/research" class="active">New Research</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% if error %}
+        <div class="error-card">
+            <h2>Error</h2>
+            <p>{{ error }}</p>
+            <a href="/research" class="btn">Back to Research</a>
+        </div>
+        {% else %}
+        <div class="results-header">
+            <div>
+                <h2>Research Results</h2>
+                <p class="query-text">Query: <strong>{{ query }}</strong></p>
+            </div>
+            <div class="confidence-badge">
+                <span class="conf-label">Confidence</span>
+                <span class="conf-value">{{ "%.0f"|format(confidence * 100) }}%</span>
+            </div>
+        </div>
+
+        <div class="status-banner status-{{ status }}">
+            Task ID: {{ task_id[:8] }}... | Status: {{ status }}
+        </div>
+
+        {% if sources %}
+        <div class="section">
+            <h3>Sources ({{ sources|length }})</h3>
+            <div class="sources-grid">
+                {% for source in sources %}
+                <div class="source-card">
+                    <span class="source-type source-{{ source.source_type }}">{{ source.source_type }}</span>
+                    <h4>{{ source.title }}</h4>
+                    <p class="source-url">{{ source.url }}</p>
+                    <div class="source-meta">
+                        <span>Credibility: {{ "%.0f"|format(source.credibility_score * 100) }}%</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if findings %}
+        <div class="section">
+            <h3>Key Findings ({{ findings|length }})</h3>
+            <div class="findings-list">
+                {% for finding in findings %}
+                <div class="finding-card">
+                    <span class="finding-num">{{ loop.index }}</span>
+                    <div class="finding-content">
+                        <p>{{ finding.claim }}</p>
+                        <div class="finding-meta">
+                            <span class="source-type source-{{ finding.source_type }}">{{ finding.source_type }}</span>
+                            <span>Credibility: {{ "%.0f"|format(finding.credibility * 100) }}%</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if summary %}
+        <div class="section">
+            <h3>Summary</h3>
+            <div class="summary-box">
+                <pre>{{ summary }}</pre>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="/research" class="btn btn-primary">New Research</a>
+            <a href="/" class="btn">Back to Dashboard</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>Agent OS v1.0 - Deep Research Autonomous Agent System</p>
+    </footer>
+</body>
+</html>

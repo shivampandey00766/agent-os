@@ -9,93 +9,116 @@
 <body>
     <header>
         <div class="container">
-            <h1>Agent OS</h1>
+            <h1>agent-os</h1>
             <nav>
-                <a href="/">Dashboard</a>
-                <a href="/research" class="active">New Research</a>
+                <a href="/">dashboard</a>
+                <a href="/research" class="active">research</a>
             </nav>
         </div>
     </header>
 
     <main class="container">
         {% if error %}
-        <div class="error-card">
-            <h2>Error</h2>
-            <p>{{ error }}</p>
-            <a href="/research" class="btn">Back to Research</a>
-        </div>
+        <div class="error">{{ error }}</div>
+        <a href="/research" class="btn">back</a>
         {% else %}
         <div class="results-header">
             <div>
-                <h2>Research Results</h2>
-                <p class="query-text">Query: <strong>{{ query }}</strong></p>
+                <h2 style="color: var(--accent-green); font-size: 1rem; margin-bottom: 8px;">
+                    <span class="prompt">$</span> research --completed
+                </h2>
+                <div class="query-display">
+                    query: <strong>{{ query }}</strong>
+                </div>
             </div>
-            <div class="confidence-badge">
-                <span class="conf-label">Confidence</span>
-                <span class="conf-value">{{ "%.0f"|format(confidence * 100) }}%</span>
+            <div class="confidence-display">
+                <div class="conf-label">confidence</div>
+                <div class="conf-value">{{ "%.0f"|format(confidence * 100) }}%</div>
             </div>
         </div>
 
-        <div class="status-banner status-{{ status }}">
-            Task ID: {{ task_id[:8] }}... | Status: {{ status }}
+        <div class="terminal-box" style="margin-bottom: 24px;">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                </div>
+                <span class="terminal-title">task {{ task_id[:12] }}... | {{ status }}</span>
+            </div>
         </div>
 
         {% if sources %}
         <div class="section">
-            <h3>Sources ({{ sources|length }})</h3>
-            <div class="sources-grid">
-                {% for source in sources %}
-                <div class="source-card">
-                    <span class="source-type source-{{ source.source_type }}">{{ source.source_type }}</span>
-                    <h4>{{ source.title }}</h4>
-                    <p class="source-url">{{ source.url }}</p>
-                    <div class="source-meta">
-                        <span>Credibility: {{ "%.0f"|format(source.credibility_score * 100) }}%</span>
+            <div class="section-header">
+                <span class="section-title">sources</span>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">{{ sources|length }}</span>
+            </div>
+            <div class="section-content">
+                <div class="sources-grid">
+                    {% for source in sources %}
+                    <div class="source-card">
+                        <span class="source-type {{ source.source_type }}">{{ source.source_type }}</span>
+                        <div class="source-title">{{ source.title }}</div>
+                        <div class="source-url">{{ source.url }}</div>
+                        <div class="source-meta">credibility: {{ "%.0f"|format(source.credibility_score * 100) }}%</div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
         {% endif %}
 
         {% if findings %}
         <div class="section">
-            <h3>Key Findings ({{ findings|length }})</h3>
-            <div class="findings-list">
-                {% for finding in findings %}
-                <div class="finding-card">
-                    <span class="finding-num">{{ loop.index }}</span>
-                    <div class="finding-content">
-                        <p>{{ finding.claim }}</p>
-                        <div class="finding-meta">
-                            <span class="source-type source-{{ finding.source_type }}">{{ finding.source_type }}</span>
-                            <span>Credibility: {{ "%.0f"|format(finding.credibility * 100) }}%</span>
+            <div class="section-header">
+                <span class="section-title">findings</span>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">{{ findings|length }}</span>
+            </div>
+            <div class="section-content">
+                <div class="findings-list">
+                    {% for finding in findings %}
+                    <div class="finding-item">
+                        <span class="finding-num">{{ loop.index }}.</span>
+                        <div class="finding-text">
+                            {{ finding.claim }}
+                            <div class="finding-meta">
+                                {{ finding.source_type }} | credibility: {{ "%.0f"|format(finding.credibility * 100) }}%
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
         {% endif %}
 
         {% if summary %}
         <div class="section">
-            <h3>Summary</h3>
-            <div class="summary-box">
-                <pre>{{ summary }}</pre>
+            <div class="section-header">
+                <span class="section-title">summary</span>
+            </div>
+            <div class="section-content">
+                <div class="summary-box">
+                    <pre>{{ summary }}</pre>
+                </div>
             </div>
         </div>
         {% endif %}
 
         <div class="actions">
-            <a href="/research" class="btn btn-primary">New Research</a>
-            <a href="/" class="btn">Back to Dashboard</a>
+            <a href="/research" class="btn btn-primary">
+                <span class="prompt">$</span> ./research --new
+            </a>
+            <a href="/" class="btn">
+                <span class="prompt">$</span> cd /
+            </a>
         </div>
         {% endif %}
     </main>
 
     <footer>
-        <p>Agent OS v1.0 - Deep Research Autonomous Agent System</p>
+        <p>agent-os v1.0</p>
     </footer>
 </body>
 </html>

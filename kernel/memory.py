@@ -146,9 +146,16 @@ class MemoryManager:
         """Get all working memory as context dict."""
         context = {}
         for file in self.working_path.glob("*.json"):
-            with open(file, 'r') as f:
-                entry = MemoryEntry.from_dict(json.load(f))
-                context[entry.id] = entry.content.get("value")
+            try:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    # Skip non-memory-entry files (like active.json from checkpoint)
+                    if "layer" in data and data.get("layer") == MemoryLayer.WORKING.value:
+                        entry = MemoryEntry.from_dict(data)
+                        context[entry.id] = entry.content.get("value")
+            except (TypeError, KeyError):
+                # Skip files that don't match MemoryEntry schema
+                continue
         return context
 
     def clear_working(self) -> None:
@@ -344,10 +351,16 @@ class MemoryManager:
         """Get all procedural entries of a specific pattern type."""
         results = []
         for file in self.procedural_path.glob("*.json"):
-            with open(file, 'r') as f:
-                entry = MemoryEntry.from_dict(json.load(f))
-                if pattern_type in entry.tags:
-                    results.append(entry)
+            try:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    # Skip non-MemoryEntry files (skill_metrics.json, learned_patterns.json)
+                    if "layer" in data and data.get("layer") == MemoryLayer.PROCEDURAL.value:
+                        entry = MemoryEntry.from_dict(data)
+                        if pattern_type in entry.tags:
+                            results.append(entry)
+            except (TypeError, KeyError):
+                continue
         return sorted(results, key=lambda e: -e.content.get("success_rate", 0))
 
     def update_skill_success(self, skill_name: str, success: bool) -> bool:

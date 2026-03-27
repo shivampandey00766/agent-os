@@ -211,7 +211,9 @@ class TaskQueue:
         with open(new_path, 'w') as f:
             json.dump(task.to_dict(), f, indent=2)
 
-        old_path.unlink()
+        # Only unlink if file exists (may have been moved already)
+        if old_path.exists():
+            old_path.unlink()
         return True
 
     def fail(self, task_id: str, error: str) -> bool:
